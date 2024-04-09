@@ -1,0 +1,276 @@
+basePath: /chat/api
+definitions:
+  baseresponse.ResponseError:
+    properties:
+      error:
+        type: string
+      response:
+        type: integer
+    type: object
+  request.RegisterRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  request.SendPrivateMessageRequest:
+    properties:
+      content:
+        type: string
+    required:
+    - content
+    type: object
+  request.SendPublicMessageRequest:
+    properties:
+      content:
+        type: string
+    required:
+    - content
+    type: object
+  request.ShowPrivateMessageRequest:
+    properties:
+      limit:
+        type: integer
+      offset:
+        type: integer
+    type: object
+  request.ShowPublicMessageRequest:
+    properties:
+      limit:
+        type: integer
+      offset:
+        type: integer
+    type: object
+  response.RegisterResponse:
+    properties:
+      response:
+        type: string
+      status:
+        type: integer
+    type: object
+  response.SendPrivateMessageResponse:
+    properties:
+      response:
+        type: string
+      status:
+        type: integer
+    type: object
+  response.SendPublicMessageResponse:
+    properties:
+      response:
+        type: string
+      status:
+        type: integer
+    type: object
+  response.ShowPrivateMessageResponse:
+    properties:
+      messages:
+        items:
+          type: string
+        type: array
+      response:
+        type: string
+      status:
+        type: integer
+    type: object
+  response.ShowPublicMessageResponse:
+    properties:
+      messages:
+        items:
+          type: string
+        type: array
+      response:
+        type: string
+      status:
+        type: integer
+    type: object
+  response.ViewUserListResponse:
+    properties:
+      response:
+        type: string
+      status:
+        type: integer
+      users:
+        items:
+          type: string
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Server for Messenger
+  title: Chat API
+  version: "1.0"
+paths:
+  /v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Регистрирует нового пользователя с заданным именем пользователя
+        и паролем.
+      parameters:
+      - description: Данные нового пользователя
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/request.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пользователь успешно создан
+          schema:
+            $ref: '#/definitions/response.RegisterResponse'
+        "400":
+          description: Неверный запрос или ошибка при создании пользователя
+          schema:
+            $ref: '#/definitions/baseresponse.ResponseError'
+      tags:
+      - auth
+  /v1/private/messages:
+    get:
+      consumes:
+      - application/json
+      description: Получает приватные сообщения между отправителем и получателем с
+        заданным лимитом и смещением.
+      parameters:
+      - description: Имя отправителя/получателя
+        in: query
+        name: username
+        required: true
+        type: string
+      - description: Параметры запроса сообщений
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/request.ShowPrivateMessageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Сообщения успешно получены
+          schema:
+            $ref: '#/definitions/response.ShowPrivateMessageResponse'
+        "400":
+          description: Неверный запрос или ошибка при получении сообщений
+          schema:
+            $ref: '#/definitions/baseresponse.ResponseError'
+      security:
+      - BasicAuth: []
+      tags:
+      - private
+    post:
+      consumes:
+      - application/json
+      description: Отправляет приватное сообщение от имени отправителя указанному
+        получателю.
+      parameters:
+      - description: Имя получателя
+        in: query
+        name: username
+        required: true
+        type: string
+      - description: Данные сообщения
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/request.SendPrivateMessageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Сообщение успешно отправлено
+          schema:
+            $ref: '#/definitions/response.SendPrivateMessageResponse'
+        "400":
+          description: Неверный запрос или ошибка при отправке сообщения
+          schema:
+            $ref: '#/definitions/baseresponse.ResponseError'
+      security:
+      - BasicAuth: []
+      tags:
+      - private
+  /v1/private/users:
+    get:
+      consumes:
+      - application/json
+      description: Получает список пользователей.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список пользователей успешно получен
+          schema:
+            $ref: '#/definitions/response.ViewUserListResponse'
+        "400":
+          description: Неверный запрос или ошибка при получении списка пользователей
+          schema:
+            $ref: '#/definitions/baseresponse.ResponseError'
+      security:
+      - BasicAuth: []
+      tags:
+      - private
+  /v1/public/messages:
+    get:
+      consumes:
+      - application/json
+      description: Получает сообщения из публичного чата с заданным лимитом и смещением.
+      parameters:
+      - description: Параметры запроса сообщений
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/request.ShowPublicMessageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Сообщения успешно получены
+          schema:
+            $ref: '#/definitions/response.ShowPublicMessageResponse'
+        "400":
+          description: Неверный запрос или ошибка при получении сообщений
+          schema:
+            $ref: '#/definitions/baseresponse.ResponseError'
+      security:
+      - BasicAuth: []
+      tags:
+      - public
+    post:
+      consumes:
+      - application/json
+      description: Отправляет сообщение в публичный чат от имени пользователя.
+      parameters:
+      - description: Данные сообщения
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/request.SendPublicMessageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Сообщение успешно отправлено
+          schema:
+            $ref: '#/definitions/response.SendPublicMessageResponse'
+        "400":
+          description: Неверный запрос или ошибка при отправке сообщения
+          schema:
+            $ref: '#/definitions/baseresponse.ResponseError'
+      security:
+      - BasicAuth: []
+      tags:
+      - public
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

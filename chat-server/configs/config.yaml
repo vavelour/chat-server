@@ -1,0 +1,15 @@
+db:
+  type: "in_memory_db"
+  host: "localhost"
+  port: "5432"
+  user: "tester"
+  db_name: "hw6"
+  password: "123"
+  ssl_mode: "disable"
+server:
+  addr: "8080"
+  read_timeout: 10s
+  write_timeout: 10s
+  max_header_bytes: 20
+auth:
+  type: "basic_auth"

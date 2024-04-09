@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: tester
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: hw6
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_SSL_MODE: disable
+    ports:
+      - "5432:5432"
